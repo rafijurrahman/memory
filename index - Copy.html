@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>স্মৃতির কাউন্টার</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;600;700&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Hind Siliguri', sans-serif;
+            /* আপনার দেওয়া মার্ক করা রঙের হুবহু শেড */
+            background-color: #A35D55; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .hearts { position: absolute; width: 100%; height: 100%; z-index: -1; }
+        .heart {
+            position: absolute;
+            bottom: -10%;
+            color: rgba(255, 255, 255, 0.2);
+            font-size: 18px;
+            animation: moveUp 7s linear infinite;
+        }
+
+        @keyframes moveUp {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0.8; }
+            100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; }
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 50px 30px;
+            border-radius: 25px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            text-align: center;
+            width: 520px;
+            max-width: 90%;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            animation: fadeIn 1.2s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.98); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            color: #ffffff;
+            margin-bottom: 40px;
+            font-weight: 700;
+        }
+
+        .counter-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 40px;
+        }
+
+        .unit-box {
+            background: #ffffff;
+            padding: 22px 5px;
+            border-radius: 18px;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+        }
+
+        .val {
+            display: block;
+            font-size: 2.3rem;
+            font-weight: 800;
+            color: #333;
+            line-height: 1;
+        }
+
+        .lbl {
+            font-size: 0.85rem;
+            color: #999;
+            margin-top: 8px;
+            font-weight: 600;
+        }
+
+        .footer-text {
+            color: #ffffff;
+            font-size: 1.2rem;
+            margin-top: 10px;
+            font-weight: 400;
+            line-height: 1.6;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+            font-style: italic;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="hearts" id="heartContainer"></div>
+
+    <div class="card">
+        <h1>তার সাথে শেষ কথা</h1>
+
+        <div class="counter-grid">
+            <div class="unit-box">
+                <span class="val" id="days">০০</span>
+                <span class="lbl">দিন</span>
+            </div>
+            <div class="unit-box">
+                <span class="val" id="hours">০০</span>
+                <span class="lbl">ঘণ্টা</span>
+            </div>
+            <div class="unit-box">
+                <span class="val" id="mins">০০</span>
+                <span class="lbl">মিনিট</span>
+            </div>
+            <div class="unit-box">
+                <span class="val" id="secs">০০</span>
+                <span class="lbl">সেকেন্ড</span>
+            </div>
+        </div>
+
+        <p class="footer-text">'আমি তোমাকেই বলে দিবো কি যে এক দীর্ঘ রাত, আমি হেটে গেছি বিরান পথে'</p>
+    </div>
+
+    <script>
+        function toBn(n) {
+            const bn = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
+            return n.toString().split('').map(d => bn[d] || d).join('');
+        }
+
+        // আপনার দেওয়া সময়: ২৪ জানুয়ারি ২০২৬, ১০:৩৫ AM
+        const target = new Date(2026, 0, 24, 10, 35, 0);
+
+        function update() {
+            const now = new Date();
+            const diff = now - target;
+
+            if (diff > 0) {
+                const d = Math.floor(diff / 86400000);
+                const h = Math.floor((diff % 86400000) / 3600000);
+                const m = Math.floor((diff % 3600000) / 60000);
+                const s = Math.floor((diff % 60000) / 1000);
+
+                document.getElementById('days').innerText = toBn(d.toString().padStart(2, '0'));
+                document.getElementById('hours').innerText = toBn(h.toString().padStart(2, '0'));
+                document.getElementById('mins').innerText = toBn(m.toString().padStart(2, '0'));
+                document.getElementById('secs').innerText = toBn(s.toString().padStart(2, '0'));
+            }
+        }
+
+        function createHeart() {
+            const h = document.createElement('div');
+            h.classList.add('heart');
+            h.innerHTML = '❤️';
+            h.style.left = Math.random() * 100 + 'vw';
+            h.style.animationDuration = (Math.random() * 3 + 4) + 's';
+            document.getElementById('heartContainer').appendChild(h);
+            setTimeout(() => h.remove(), 7000);
+        }
+
+        setInterval(createHeart, 1200);
+        setInterval(update, 1000);
+        update();
+    </script>
+</body>
+</html>
